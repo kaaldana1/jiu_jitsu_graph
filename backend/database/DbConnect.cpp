@@ -4,12 +4,14 @@
 
 void load_env()
 {
-    FILE *file = fopen("env", "r");
-    if (!file)
+    FILE *file;
+
+    if ((file = fopen("../../.env", "r")) == NULL)
     {
         printf("Error, unable to open file");
         exit(1);
     }
+
     char line[256];
 
     while(fgets(line, sizeof(line), file))
@@ -21,6 +23,8 @@ void load_env()
 
 int main()
 {
+    load_env();
+
     char *dbname = getenv("PGDATABASE");
     char *user = getenv("PGUSER");
     char *password = getenv("PGPASSWORD");
@@ -33,6 +37,8 @@ int main()
      "dbname=%s user=%s password=%s host=%s port=%s",
      dbname, user, password, host, port);
 
+     printf(conninfo);
+
     PGconn *conn = PQconnectdb(conninfo);
     if (PQstatus(conn) == CONNECTION_OK)
     {
@@ -40,6 +46,7 @@ int main()
         PQfinish(conn);
         return 0;
     }
+
     printf("Connection failed");
     PQfinish(conn);
     return 1;
