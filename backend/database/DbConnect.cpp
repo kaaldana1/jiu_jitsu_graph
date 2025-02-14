@@ -1,8 +1,13 @@
-#include <iostream>
-#include <stdlib.h>
-#include <libpq-fe.h>
+//DBConnect (Database Connection Layer)
+//Responsible only for managing database connections and executing queries.
+#include "DbConnect.h"
 
-void load_env()
+
+PGconn * ConnectDB::get_connection(){
+    return conn;
+}
+
+void ConnectDB::load_env()
 {
     FILE *file;
 
@@ -21,7 +26,7 @@ void load_env()
     fclose(file);
 }
 
-int main()
+bool ConnectDB::establish_connection()
 {
     load_env();
 
@@ -39,17 +44,17 @@ int main()
 
      printf(conninfo);
 
-    PGconn *conn = PQconnectdb(conninfo);
+    conn = PQconnectdb(conninfo);
     if (PQstatus(conn) == CONNECTION_OK)
     {
         printf("Connection successful");
         PQfinish(conn);
-        return 0;
+        return true;
     }
 
     printf("Connection failed");
     PQfinish(conn);
-    return 1;
+    return false;
 
-    
 }
+
