@@ -2,7 +2,12 @@
 //Responsible only for managing database connections and executing queries.
 #include "DbConnect.h"
 
-
+ConnectDB::ConnectDB() : conn(nullptr) {}
+ConnectDB::~ConnectDB()
+{
+    PQfinish(conn);
+    printf("Connection closed");
+}
 PGconn * ConnectDB::get_connection(){
     return conn;
 }
@@ -48,13 +53,12 @@ bool ConnectDB::establish_connection()
     if (PQstatus(conn) == CONNECTION_OK)
     {
         printf("Connection successful");
-        PQfinish(conn);
         return true;
     }
 
     printf("Connection failed");
-    PQfinish(conn);
     return false;
 
 }
+
 
